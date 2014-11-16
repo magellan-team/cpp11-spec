@@ -3,8 +3,9 @@
 
 TEST(decltype, returns_the_type_of_that_variable_including_top_level_const_and_references)
 {
-    const auto ci = 10, &cr = ci;
-  
+    const auto ci = 10;
+    auto &cr = ci;
+
     decltype(ci) a = ci;
     decltype(cr) b = ci;
 

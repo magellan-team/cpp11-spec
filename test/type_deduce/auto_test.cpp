@@ -3,7 +3,8 @@
 
 TEST(auto, uses_object_type_when_reference_as_initializer)
 {
-    auto i = 10, &r = i;
+    auto i = 10;
+    auto &r = i;
     auto a = r;
     
     ASSERT_TYPE(int,  i);
