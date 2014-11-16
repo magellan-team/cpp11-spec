@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "assertion.h"
+#include "assertion/type_assertion.h"
 
 TEST(auto, uses_object_type_when_reference_as_initializer)
 {

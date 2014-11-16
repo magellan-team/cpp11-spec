@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "assertion.h"
+#include "assertion/type_assertion.h"
 
 TEST(decltype, returns_the_type_of_that_variable_including_top_level_const_and_references)
 {
