@@ -12,23 +12,23 @@ namespace
 
     void func(int value)
     {
-    	expect_call = 1;
+        expect_call = 1;
     }
 
     void func(int* ptr)
     {
-    	expect_call = 2;
+        expect_call = 2;
     }
 }
 
 TEST(nullptr, only_nullptr_is_unambiguously_a_pointer)
 {
-	func(0);
-	ASSERT_EQ(1, expect_call);
+    func(0);
+    ASSERT_EQ(1, expect_call);
 
-	func(nullptr);
-	ASSERT_EQ(2, expect_call);
+    func(nullptr);
+    ASSERT_EQ(2, expect_call);
 
-	func((int*)NULL);
-	ASSERT_EQ(2, expect_call);
+    func((int*)NULL);
+    ASSERT_EQ(2, expect_call);
 }

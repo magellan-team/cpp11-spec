@@ -45,34 +45,34 @@ namespace
     template <typename T, size_t MAX_NUM>
     struct FixedArray
     {
-    	FixedArray(std::initializer_list<T> list)
-    	{
-    		std::copy(list.begin(), list.end(), array);
-    	}
+        FixedArray(std::initializer_list<T> list)
+        {
+            std::copy(list.begin(), list.end(), array);
+        }
 
-    	void fill(const T& value)
-    	{
-    		std::fill(begin(), end(), value);
-    	}
+        void fill(const T& value)
+        {
+            std::fill(begin(), end(), value);
+        }
 
         T* begin()
         {
-        	return array;
+            return array;
         }
 
         T* end()
         {
-        	return array + MAX_NUM;
+            return array + MAX_NUM;
         }
 
         const T* begin() const
         {
-        	return array;
+            return array;
         }
 
         const T* end() const
         {
-        	return array + MAX_NUM;
+            return array + MAX_NUM;
         }
 
     private:
@@ -87,7 +87,7 @@ TEST(range_for, user_defined_type_support_range_for_only_if_begin_and_end_are_va
     int sum = 0;
     for (auto e : array)
     {
-    	sum += e;
+        sum += e;
     }
 
     ASSERT_EQ(6, sum);
@@ -99,13 +99,13 @@ TEST(range_for, modify_element_when_iterate_list)
 
     for (auto &e : array)
     {
-    	e *= 2;
+        e *= 2;
     }
 
     int sum = 0;
     for (auto e : array)
     {
-    	sum += e;
+        sum += e;
     }
 
     ASSERT_EQ(12, sum);
@@ -113,15 +113,15 @@ TEST(range_for, modify_element_when_iterate_list)
 
 TEST(range_for, use_const_reference_when_iterate_class_type)
 {
-	std::vector<std::string> sv;
+    std::vector<std::string> sv;
 
-	sv.emplace_back("hello,");
-	sv.emplace_back("world!");
+    sv.emplace_back("hello,");
+    sv.emplace_back("world!");
 
-	std::string result;
+    std::string result;
     for (const auto& e : sv)
     {
-    	result += e;
+        result += e;
     }
 
     ASSERT_EQ("hello,world!", result);
