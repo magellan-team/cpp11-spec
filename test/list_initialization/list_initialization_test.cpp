@@ -94,3 +94,43 @@ TEST(list_initialization, array_in_the_class_supports_the_brace_initialization)
     Widget widget1 = {1, 2, 3};
     Widget widget2{1, 2, 3};
 }
+
+TEST(list_initialization, return_value_support_the_brace_initialization)
+{
+    struct Line
+    {
+        Line(int start, int length) : start(start), length(length)
+        {}
+
+        static Line create(int start, int length)
+        {
+            return {start, length};
+        }
+
+    private:
+        int start;
+        int length;
+    };
+    
+    Line::create(1, 10);
+}
+
+namespace
+{
+    int sum(const std::vector<int>& numbers)
+    {
+        int result = 0;
+        for (auto num : numbers)
+        {
+            result += num;
+        }
+        return result;
+    }
+}
+
+
+TEST(list_initialization, function_param_support_the_brace_initialization)
+{
+    ASSERT_EQ(6, sum({1, 2, 3}));
+}
+
