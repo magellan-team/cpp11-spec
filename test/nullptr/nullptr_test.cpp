@@ -3,7 +3,7 @@
 
 TEST(nullptr, the_type_of_nullptr_is_std_nullptr_t)
 {
-    ASSERT_TYPE(std::nullptr_t, nullptr);
+    STATIC_ASSERT_TYPE(std::nullptr_t, nullptr);
 }
 
 namespace

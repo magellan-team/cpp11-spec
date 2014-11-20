@@ -6,7 +6,7 @@
 TEST(list_initialization, the_type_of_brace_initialization_is_std_initializer_list)
 {
     auto list = {1, 3, 3};
-    ASSERT_TYPE(std::initializer_list<int>, list);
+    STATIC_ASSERT_TYPE(std::initializer_list<int>, list);
 }
 
 TEST(list_initialization, build_in_type_supports_the_brace_initialization)

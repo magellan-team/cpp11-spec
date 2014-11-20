@@ -9,8 +9,8 @@ TEST(decltype, returns_the_type_of_that_variable_including_top_level_const_and_r
     decltype(ci) a = ci;
     decltype(cr) b = ci;
 
-    ASSERT_TYPE(const int,  a);
-    ASSERT_TYPE(const int&, b);
+    STATIC_ASSERT_TYPE(const int,  a);
+    STATIC_ASSERT_TYPE(const int&, b);
 }
 
 TEST(decltype, with_double_parentheses_is_always_reference_type)
@@ -21,6 +21,6 @@ TEST(decltype, with_double_parentheses_is_always_reference_type)
     decltype((i))  a = i;
     decltype((ci)) b = ci;
     
-    ASSERT_TYPE(int&, a);
-    ASSERT_TYPE(const int&, b);
+    STATIC_ASSERT_TYPE(int&, a);
+    STATIC_ASSERT_TYPE(const int&, b);
 }
