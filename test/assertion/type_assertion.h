@@ -7,3 +7,6 @@
 
 #define STATIC_ASSERT_TYPE(expect_type, expr) \
     STATIC_ASSERT_TRUE((std::is_same<expect_type, decltype(expr)>::value))
+
+#define STATIC_ASSERT_SAME_TYPE(expect_type, actual_type) \
+    STATIC_ASSERT_TRUE((std::is_same<expect_type, actual_type>::value))
