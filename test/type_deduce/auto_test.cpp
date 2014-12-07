@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "assertion/type_assertion.h"
+#include <initializer_list>
 
 TEST(auto, uses_object_type_when_reference_as_initializer)
 {
@@ -94,4 +95,13 @@ TEST(auto, auto_deduced_type_for_function)
     decltype(sum) *g = sum;
     STATIC_ASSERT_TYPE(int (*)(int, int), g);
     STATIC_ASSERT_TYPE(auto (*)(int, int) ->int, g);
+}
+
+TEST(auto, when_the_initializer_for_a_declared_variable_is_enclosed_in_braces_then_the_deduced_type_is_a_std_initializer_list)
+{
+    auto i = {10};
+    auto j{10};
+
+    STATIC_ASSERT_TYPE(std::initializer_list<int>, i);
+    STATIC_ASSERT_TYPE(std::initializer_list<int>, j);
 }

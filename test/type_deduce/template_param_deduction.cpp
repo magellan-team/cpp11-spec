@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "assertion/type_assertion.h"
+#include <initializer_list>
 
 namespace
 {
@@ -143,3 +144,17 @@ TEST(function_decays_to_pointer, should_deduce_for_function)
     lvalue_reference<void(int, double), void(&)(int, double)>(func);
     lvalue_reference_to_const<void(int, double), void(&)(int, double)>(func);
 }
+
+namespace
+{
+    DEF_GENERIC_FUNC(brace_initializer(std::initializer_list<T> t))
+    DEF_GENERIC_FUNC(const_brace_initializer(const std::initializer_list<T> t))
+}
+
+TEST(initializer_list, should_deduce_for_brace_initialization)
+{
+    brace_initializer<int, std::initializer_list<int>>({1, 2, 3});
+    const_brace_initializer<int, const std::initializer_list<int>>({1, 2, 3});
+}
+
+
