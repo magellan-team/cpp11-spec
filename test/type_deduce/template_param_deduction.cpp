@@ -26,7 +26,7 @@ namespace
     DEF_GENERIC_FUNC(lvalue_reference_to_const(const T& t))
     DEF_GENERIC_FUNC(lvalue_pointer(T* t))
     DEF_GENERIC_FUNC(lvalue_pointer_to_const(const T* t))
-    DEF_GENERIC_FUNC(rvalue_reference(T&& t))
+    DEF_GENERIC_FUNC(universal_reference(T&& t))
     DEF_GENERIC_FUNC(value(T t))
     DEF_GENERIC_FUNC(const_value(const T t))
 }
@@ -71,29 +71,46 @@ TEST(lvalue_reference_to_const, should_deduce_for_ref_to_const_obj)
     lvalue_reference_to_const<int, const int&>(cr);
 }
 
-TEST(rvalue, should_deduce_for_non_const_obj)
+TEST(lvalue_reference_to_const, should_deduce_for_nullptr)
 {
-    rvalue_reference<int&, int&>(i);
+    lvalue_reference_to_const<std::nullptr_t, const std::nullptr_t&>(nullptr);
 }
 
-TEST(rvalue, should_deduce_for_ref_to_non_const_obj)
+TEST(lvalue_reference_to_const, should_deduce_for_pointer)
 {
-    rvalue_reference<int&, int&>(r);
+    auto pi = &i;
+    auto pci = &ci;
+
+    STATIC_ASSERT_TYPE(int*, pi);
+    STATIC_ASSERT_TYPE(const int*, pci);
+
+    lvalue_reference_to_const<int*, int* const&>(pi);
+    lvalue_reference_to_const<const int*, const int* const&>(pci);
 }
 
-TEST(rvalue, should_deduce_for_const_obj)
+TEST(universal_reference, should_deduce_for_non_const_obj)
 {
-    rvalue_reference<const int&, const int&>(ci);
+    universal_reference<int&, int&>(i);
 }
 
-TEST(rvalue, should_deduce_for_ref_to_const_obj)
+TEST(universal_reference, should_deduce_for_ref_to_non_const_obj)
 {
-    rvalue_reference<const int&, const int&>(cr);
+    universal_reference<int&, int&>(r);
 }
 
-TEST(rvalue, should_deduce_for_rvalue)
+TEST(universal_reference, should_deduce_for_const_obj)
 {
-    rvalue_reference<int, int&&>(10);
+    universal_reference<const int&, const int&>(ci);
+}
+
+TEST(universal_reference, should_deduce_for_ref_to_const_obj)
+{
+    universal_reference<const int&, const int&>(cr);
+}
+
+TEST(universal_reference, should_deduce_for_rvalue)
+{
+    universal_reference<int, int&&>(10);
 }
 
 TEST(value, should_deduce_for_non_const_obj)
@@ -126,14 +143,46 @@ TEST(value, should_deduce_for_const_pointer_to_const_obj)
     const_value<const int*, const int* const>(cpc);
 }
 
-TEST(array_decays_to_pointer, should_deduce_for_arr)
+namespace
 {
-    const int arr[] = {1, 2, 3};
+    int arr[] = {1, 2, 3};
+    const int carr[] = {1, 2, 3};
 
-    lvalue_reference<const int[3], const int(&)[3]>(arr);
+    auto &rarr = arr;
+    auto &crarr = carr;
+}
+
+TEST(array_type, should_deduce_for_array)
+{
+    STATIC_ASSERT_TYPE(int[3], arr);
+    STATIC_ASSERT_TYPE(const int[3], carr);
+
+    STATIC_ASSERT_TYPE(int(&)[3], rarr);
+    STATIC_ASSERT_TYPE(const int(&)[3], crarr);
+}
+
+TEST(array_decays_to_pointer, should_deduce_for_non_const_arr)
+{
+    value<int*, int*>(arr);
+    const_value<int*, int*const>(arr);
+}
+
+TEST(array_not_decays_to_pointer, should_deduce_for_non_const_arr)
+{
+    lvalue_reference<int[3], int(&)[3]>(arr);
     lvalue_reference_to_const<int[3], const int(&)[3]>(arr);
-    
-    value<const int*, const int*>(arr);
+}
+
+TEST(array_decays_to_pointer, should_deduce_for_const_arr)
+{
+    value<const int*, const int*>(carr);
+    const_value<const int*, const int* const>(carr);
+}
+
+TEST(array_not_decays_to_pointer, should_deduce_for_const_arr)
+{
+    lvalue_reference<const int[3], const int(&)[3]>(carr);
+    lvalue_reference_to_const<int[3], const int(&)[3]>(carr);
 }
 
 static void func(int, double) {}
@@ -141,8 +190,17 @@ static void func(int, double) {}
 TEST(function_decays_to_pointer, should_deduce_for_function)
 {
     value<void(*)(int, double), void(*)(int, double)>(func);
+    const_value<void(*)(int, double), void(*const)(int, double)>(func);
+}
+
+TEST(function_not_decays_to_pointer, should_deduce_for_function)
+{
     lvalue_reference<void(int, double), void(&)(int, double)>(func);
-    lvalue_reference_to_const<void(int, double), void(&)(int, double)>(func);
+
+    using non_const_ref = void(&)(int, double);
+
+    lvalue_reference_to_const<void(int, double), const non_const_ref>(func);
+    lvalue_reference_to_const<void(int, double), non_const_ref>(func);
 }
 
 namespace
@@ -151,10 +209,26 @@ namespace
     DEF_GENERIC_FUNC(const_brace_initializer(const std::initializer_list<T> t))
 }
 
+TEST(cpp98_initialization, should_be_deduce_type_normally)
+{
+    auto a = 2;
+    auto b(2);
+
+    STATIC_ASSERT_TYPE(int, a);
+    STATIC_ASSERT_TYPE(int, b);
+}
+
+TEST(initializer_list, auto_assumes_that_braced_initializer_represents_std_initializer_list)
+{
+    auto a = 2;
+    auto b(2);
+
+    STATIC_ASSERT_TYPE(int, a);
+    STATIC_ASSERT_TYPE(int, b);
+}
+
 TEST(initializer_list, should_deduce_for_brace_initialization)
 {
     brace_initializer<int, std::initializer_list<int>>({1, 2, 3});
     const_brace_initializer<int, const std::initializer_list<int>>({1, 2, 3});
 }
-
-
