@@ -27,3 +27,4 @@ TEST(lvalue, prefix_increment_or_decrement_expr_return_noref_type)
     auto &&prefix = ++i;
     STATIC_ASSERT_LVALUE_REF(prefix);
 }
+
