@@ -1,41 +1,6 @@
 #include <gtest/gtest.h>
-#include <array>
+#include <type_traits/type_traits_fixture.h>
 #include "assertion/type_assertion.h"
-
-namespace
-{
-    class C1 {};
-
-    struct C2
-    {
-        virtual void func1() = 0;
-        virtual void func2(int) const = 0;
-        virtual void func3() volatile = 0;
-        virtual void func4() const volatile = 0;
-
-        virtual ~C2();
-    };
-
-    struct C3 : C2
-    {
-        int a;
-        std::vector<int> b;
-
-    private:
-        void func1() override {}
-        virtual void func2(int) const override {}
-        virtual void func3() volatile override {}
-        virtual void func4() const volatile override {}
-    };
-
-    enum E1 { E1_ENUM };
-    enum class E2 {};
-    enum class E3 : int {};
-    enum struct E4 {};
-
-    union U1 { int i; long l; };
-    union U2 { C1 c1; C3 c3; };
-}
 
 TEST(primary_type, is_void)
 {
@@ -86,18 +51,18 @@ TEST(primary_type, is_array)
     STATIC_ASSERT_TRUE(std::is_array<C1[]>::value);
     STATIC_ASSERT_TRUE(std::is_array<C1[10]>::value);
 
-    using int_array = std::array<int, 10>;
-    STATIC_ASSERT_FALSE(std::is_array<int_array>::value);
+    using int_std_array = std::array<int, 10>;
+    STATIC_ASSERT_FALSE(std::is_array<int_std_array>::value);
 }
 
 TEST(primary_type, is_enum)
 {
     STATIC_ASSERT_FALSE(std::is_enum<C1>::value);
+
     STATIC_ASSERT_TRUE(std::is_enum<E1>::value);
     STATIC_ASSERT_TRUE(std::is_enum<E2>::value);
     STATIC_ASSERT_TRUE(std::is_enum<E3>::value);
     STATIC_ASSERT_TRUE(std::is_enum<E4>::value);
-
     STATIC_ASSERT_TRUE(std::is_enum<decltype(E1_ENUM)>::value);
 }
 
@@ -114,7 +79,9 @@ TEST(primary_type, is_class)
 {
     STATIC_ASSERT_TRUE(std::is_class<C1>::value);
     STATIC_ASSERT_TRUE(std::is_class<C2>::value);
+
     STATIC_ASSERT_FALSE(std::is_class<E2>::value);
+    STATIC_ASSERT_FALSE(std::is_class<U1>::value);
 }
 
 namespace
@@ -139,10 +106,11 @@ TEST(primary_type, is_function)
     STATIC_ASSERT_TRUE(std::is_function<func2_alias>::value);
 
     STATIC_ASSERT_TRUE(std::is_function<int(const char*, ...)>::value);
+
     STATIC_ASSERT_FALSE(std::is_function<decltype(&C2::func1)>::value);
 }
 
-TEST(primary_key, is_member_function_pointer)
+TEST(primary_type, is_member_function_pointer)
 {
     STATIC_ASSERT_TRUE(std::is_member_function_pointer<void (C2::*)()>::value);
     STATIC_ASSERT_TRUE(std::is_member_function_pointer<void (C2::*)() const>::value);
@@ -179,6 +147,7 @@ TEST(primary_type, is_pointer)
     STATIC_ASSERT_TRUE(std::is_pointer<const int*>::value);
     STATIC_ASSERT_TRUE(std::is_pointer<C1*>::value);
     STATIC_ASSERT_TRUE(std::is_pointer<const C1*>::value);
+
     STATIC_ASSERT_FALSE(std::is_pointer<std::nullptr_t>::value);
 }
 
@@ -206,95 +175,4 @@ TEST(primary_type, is_rvalue_reference)
     STATIC_ASSERT_FALSE(std::is_rvalue_reference<int*>::value);
     STATIC_ASSERT_FALSE(std::is_rvalue_reference<int&>::value);
     STATIC_ASSERT_FALSE(std::is_rvalue_reference<const int&>::value);
-}
-
-TEST(composite_type, is_arithmetic)
-{
-    STATIC_ASSERT_TRUE(std::is_arithmetic<int>::value);
-    STATIC_ASSERT_TRUE(std::is_arithmetic<float>::value);
-
-    STATIC_ASSERT_FALSE(std::is_arithmetic<void>::value);
-    STATIC_ASSERT_FALSE(std::is_arithmetic<std::nullptr_t>::value);
-
-    STATIC_ASSERT_FALSE(std::is_arithmetic<int&>::value);
-    STATIC_ASSERT_FALSE(std::is_arithmetic<float*>::value);
-
-    STATIC_ASSERT_FALSE(std::is_arithmetic<C1>::value);
-    STATIC_ASSERT_FALSE(std::is_arithmetic<E1>::value);
-    STATIC_ASSERT_FALSE(std::is_arithmetic<U1>::value);
-}
-
-TEST(composite_type, is_fundamental)
-{
-    STATIC_ASSERT_TRUE(std::is_fundamental<void>::value);
-    STATIC_ASSERT_TRUE(std::is_fundamental<int>::value);
-    STATIC_ASSERT_TRUE(std::is_fundamental<float>::value);
-    STATIC_ASSERT_TRUE(std::is_fundamental<std::nullptr_t>::value);
-
-    STATIC_ASSERT_FALSE(std::is_fundamental<int&>::value);
-    STATIC_ASSERT_FALSE(std::is_fundamental<float*>::value);
-
-    STATIC_ASSERT_FALSE(std::is_fundamental<C1>::value);
-    STATIC_ASSERT_FALSE(std::is_fundamental<E1>::value);
-    STATIC_ASSERT_FALSE(std::is_fundamental<U1>::value);
-}
-
-TEST(composite_type, is_compound)
-{
-    STATIC_ASSERT_FALSE(std::is_compound<void>::value);
-    STATIC_ASSERT_FALSE(std::is_compound<int>::value);
-    STATIC_ASSERT_FALSE(std::is_compound<float>::value);
-    STATIC_ASSERT_FALSE(std::is_compound<std::nullptr_t>::value);
-
-    STATIC_ASSERT_TRUE(std::is_compound<int&>::value);
-    STATIC_ASSERT_TRUE(std::is_compound<float*>::value);
-
-    STATIC_ASSERT_TRUE(std::is_compound<C1>::value);
-    STATIC_ASSERT_TRUE(std::is_compound<E1>::value);
-    STATIC_ASSERT_TRUE(std::is_compound<U1>::value);
-}
-
-TEST(composite_type, is_reference)
-{
-    STATIC_ASSERT_TRUE(std::is_compound<int&>::value);
-    STATIC_ASSERT_TRUE(std::is_compound<C1&>::value);
-
-    STATIC_ASSERT_TRUE(std::is_compound<int&&>::value);
-    STATIC_ASSERT_TRUE(std::is_compound<C1&&>::value);
-}
-
-TEST(composite_type, is_member_pointer)
-{
-    STATIC_ASSERT_TRUE(std::is_member_pointer<int C3::*>::value);
-    STATIC_ASSERT_TRUE(std::is_member_pointer<void (C3::*)(int) const>::value);
-}
-
-TEST(composite_type, is_scalar)
-{
-    STATIC_ASSERT_TRUE(std::is_scalar<int>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<float>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<E1>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<int*>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<int C3::*>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<void (C3::*) (int) const>::value);
-    STATIC_ASSERT_TRUE(std::is_scalar<std::nullptr_t>::value);
-}
-
-TEST(type_property, is_const)
-{
-    STATIC_ASSERT_FALSE(std::is_const<int>::value);
-    STATIC_ASSERT_TRUE(std::is_const<const int>::value);
-
-    STATIC_ASSERT_FALSE(std::is_const<C2>::value);
-    STATIC_ASSERT_TRUE(std::is_const<const C2>::value);
-
-    STATIC_ASSERT_FALSE(std::is_const<const C2&>::value);
-    STATIC_ASSERT_FALSE(std::is_const<const C2*>::value);
-
-    STATIC_ASSERT_FALSE(std::is_const<decltype(E1_ENUM)>::value);
-}
-
-TEST(supported_operations, is_trivially_constructible)
-{
-
 }

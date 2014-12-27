@@ -90,42 +90,39 @@ namespace
     {
         Foo() {};
 
-        const std::string& getQualifier() const &
+        const std::string& qualifier() const &
         {
-            qualifier += "const lvalue ref qualifier";
-            return qualifier;
+            return m_qualifier;
         }
 
-        std::string& getQualifier() &
+        std::string& qualifier() &
         {
-            qualifier += "lvalue ref qualifier";
-            return qualifier;
+            return m_qualifier = "lvalue ref qualifier";
         }
 
-        std::string&& getQualifier() &&
+        std::string&& qualifier() &&
         {
-            qualifier += "rvalue ref qualifier";
-            return std::move(qualifier);
+            return std::move(m_qualifier = "rvalue ref qualifier");
         }
 
     private:
-        mutable std::string qualifier = "";
+        std::string m_qualifier = "const lvalue ref qualifier";
     };
 }
 
 TEST(rvalue, const_lvalue_ref_qualifier)
 {
     const Foo cfoo;
-    ASSERT_EQ(std::string("const lvalue ref qualifier"), cfoo.getQualifier());
+    ASSERT_EQ(std::string("const lvalue ref qualifier"), cfoo.qualifier());
 }
 
 TEST(rvalue, lvalue_ref_qualifier)
 {
     Foo foo;
-    ASSERT_EQ(std::string("lvalue ref qualifier"), foo.getQualifier());
+    ASSERT_EQ(std::string("lvalue ref qualifier"), foo.qualifier());
 }
 
 TEST(rvalue, rvalue_ref_qualifier)
 {
-    ASSERT_EQ(std::string("rvalue ref qualifier"), Foo().getQualifier());
+    ASSERT_EQ(std::string("rvalue ref qualifier"), Foo().qualifier());
 }
