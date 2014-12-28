@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <assertion/type_assertion.h>
 #include <initializer_list>
+#include <functional/functions.h>
 
 TEST(auto, should_uses_object_type_when_reference_as_initializer)
 {
@@ -70,8 +71,13 @@ TEST(auto, array_decays_to_pointer)
     const char name[] = "c++11/14";
     auto str = name;
 
+    auto &rstr1  = name;
+    auto &&rstr2 = name;
+
     STATIC_ASSERT_TYPE(const char[9], name);
     STATIC_ASSERT_TYPE(const char*, str);
+    STATIC_ASSERT_TYPE(const char (&)[9], rstr1);
+    STATIC_ASSERT_TYPE(const char (&)[9], rstr2);
 }
 
 static void func(int, float) {}
@@ -95,10 +101,12 @@ TEST(auto, array_not_decays_to_pointer_when_apply_to_ref)
 
 TEST(auto, function_not_decays_to_pointer_when_apply_to_ref)
 {
-    auto &pf = func;
+    auto &pf1 = func;
+    auto &&pf2 = func;
 
     STATIC_ASSERT_TYPE(void(int, float), func);
-    STATIC_ASSERT_TYPE(void(&)(int, float), pf);
+    STATIC_ASSERT_TYPE(void(&)(int, float), pf1);
+    STATIC_ASSERT_TYPE(void(&)(int, float), pf2);
 }
 
 TEST(auto, auto_deduced_type_for_stl_container_iterator)
@@ -157,4 +165,15 @@ TEST(auto, auto_type_deduction_equal_to_template_type_deduction)
 
     STATIC_ASSERT_TYPE(int&,  lvalue_ref);
     STATIC_ASSERT_TYPE(int&&, rvalue_ref);
+}
+
+TEST(auto, replace_container_with_iterator)
+{
+    auto arr = {-1, -2, 3, 4};
+
+    auto result1 = std::find_if(std::begin(arr), std::end(arr), [](const int e) { return e > 0; });
+    ASSERT_NE(std::end(arr), result1);
+
+    auto result2 = functional::find_if(arr, [](const int e) { return e > 0; });
+    ASSERT_NE(std::end(arr), result2);
 }

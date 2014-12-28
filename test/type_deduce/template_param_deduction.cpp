@@ -218,15 +218,6 @@ TEST(cpp98_initialization, should_be_deduce_type_normally)
     STATIC_ASSERT_TYPE(int, b);
 }
 
-TEST(initializer_list, auto_assumes_that_braced_initializer_represents_std_initializer_list)
-{
-    auto a = 2;
-    auto b(2);
-
-    STATIC_ASSERT_TYPE(int, a);
-    STATIC_ASSERT_TYPE(int, b);
-}
-
 TEST(initializer_list, should_deduce_for_brace_initialization)
 {
     brace_initializer<int, std::initializer_list<int>>({1, 2, 3});
