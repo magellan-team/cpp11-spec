@@ -14,6 +14,19 @@ TEST(rvalue, literal_constant)
 
     auto &&f = 0.0f;
     STATIC_ASSERT_RVALUE_REF(f);
+
+    auto &&c = 'c';
+    STATIC_ASSERT_RVALUE_REF(c);
+
+    auto &&l = {1, 2, 3};
+    STATIC_ASSERT_RVALUE_REF(l);
+}
+
+TEST(rvalue, c_style_string_is_not_rvalue)
+{
+    auto &&s = "c++11";
+    STATIC_ASSERT_TYPE(const char (&)[6], s);
+    STATIC_ASSERT_LVALUE_REF(s);
 }
 
 namespace
@@ -66,6 +79,7 @@ TEST(rvalue, std_move)
 TEST(rvalue, functions_that_return_noref_type)
 {
     auto &&ptr = std::make_shared<int>(10);
+    STATIC_ASSERT_TYPE(std::shared_ptr<int>&&, ptr);
     STATIC_ASSERT_RVALUE_REF(ptr);
 }
 

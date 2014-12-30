@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <assertion/type_assertion.h>
 #include <initializer_list>
-#include <functional/functions.h>
+#include <std/algorithm.h>
 
 TEST(auto, should_uses_object_type_when_reference_as_initializer)
 {
@@ -174,6 +174,6 @@ TEST(auto, replace_container_with_iterator)
     auto result1 = std::find_if(std::begin(arr), std::end(arr), [](const int e) { return e > 0; });
     ASSERT_NE(std::end(arr), result1);
 
-    auto result2 = functional::find_if(arr, [](const int e) { return e > 0; });
+    auto result2 = stdext::find_if(arr, [](const int e) { return e > 0; });
     ASSERT_NE(std::end(arr), result2);
 }

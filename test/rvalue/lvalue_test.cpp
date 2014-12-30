@@ -6,6 +6,12 @@ namespace
     auto i = 10;
 }
 
+TEST(lvalue, named_variable_is_lvalue)
+{
+    auto &&result = i; 
+    STATIC_ASSERT_LVALUE_REF(result);
+}
+
 TEST(lvalue, assignment_expr_that_return_ref_type)
 {
     auto &&result = (i=10);
