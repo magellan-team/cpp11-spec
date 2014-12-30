@@ -17,6 +17,12 @@ inline auto find_if(Container&& c, P pred)
     return std::find_if(RANG(c), pred);
 }
 
+//template <typename Container, class P>
+//inline decltype(auto) find_if(Container&& c, P pred)
+//{
+//    return std::find_if(RANG(c), pred);
+//}
+
 template <typename Container, class T>
 inline auto find(Container&& c, const T& t)
     -> decltype(std::begin(std::forward<Container>(c)))

@@ -46,8 +46,15 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="cpp11-spec.null.1115825255" name="cpp11-spec"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1309667527;cdt.managedbuild.toolchain.gnu.macosx.base.1309667527.297118345;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.788365886;cdt.managedbuild.tool.gnu.cpp.compiler.input.873080979">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1309667527;cdt.managedbuild.toolchain.gnu.macosx.base.1309667527.297118345;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1135046547;cdt.managedbuild.tool.gnu.c.compiler.input.1323686169">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

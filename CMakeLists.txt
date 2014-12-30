@@ -30,7 +30,7 @@ IF(MSVC)
 ENDIF(MSVC)
 
 IF(UNIX)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -stdlib=libc++")
 ENDIF(UNIX)
 
 FILE(GLOB_RECURSE all_files 
@@ -55,5 +55,5 @@ sort_files(all_files)
 
 add_executable(cpp11-spec ${all_files})
 
-target_link_libraries(cpp11-spec gtest pthread stdc++)
+target_link_libraries(cpp11-spec gtest pthread) 
 
