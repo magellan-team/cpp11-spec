@@ -45,7 +45,10 @@ inline OutputIterator map(Container&& c, OutputIterator result, Unary f)
 template <class Container, class T, class Binary>
 inline T reduce(Container&& c, T init, Binary f)
 {
-    return std::accumulate(RANG(c), init, f);
+    for (auto& e: c)
+        f(init, e);
+
+    return init;
 }
 
 namespace details

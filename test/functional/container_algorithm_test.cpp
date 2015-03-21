@@ -27,7 +27,7 @@ TEST(higher_order_functions, find_support_const_container)
 
 TEST(higher_order_functions, find_if_support_non_const_container)
 {
-    auto found = stdext::find_if(v1, [](int e) { return e > 0; });
+    auto found = stdext::find_if(v1, [](auto e) { return e > 0; });
 
     STATIC_ASSERT_TYPE(std::vector<int>::iterator, found);
     ASSERT_EQ(3, *found);
@@ -35,7 +35,7 @@ TEST(higher_order_functions, find_if_support_non_const_container)
 
 TEST(higher_order_functions, find_if_support_const_container)
 {
-    auto found = stdext::find_if(v2, [](int e) { return e > 0; });
+    auto found = stdext::find_if(v2, [](auto e) { return e > 0; });
 
     STATIC_ASSERT_TYPE(std::vector<int>::const_iterator, found);
     ASSERT_EQ(3, *found);
@@ -44,7 +44,7 @@ TEST(higher_order_functions, find_if_support_const_container)
 TEST(higher_order_functions, map)
 {
     std::vector<int> v;
-    stdext::map(v1, std::back_inserter(v), [](int e) { return e > 0 ? e : -e; });
+    stdext::map(v1, std::back_inserter(v), [](auto e) { return e > 0 ? e : -e; });
 
     ASSERT_EQ(1, v[0]);
     ASSERT_EQ(2, v[1]);
@@ -54,7 +54,7 @@ TEST(higher_order_functions, map)
 
 TEST(higher_order_functions, reduce)
 {
-    auto sum = stdext::reduce(arr, 0, [](int sum, int e) { return sum + e; });
+    auto sum = stdext::reduce(arr, 0, [](auto& sum, auto e) { sum += e; });
 
     ASSERT_EQ(4, sum);
 }
@@ -62,7 +62,7 @@ TEST(higher_order_functions, reduce)
 TEST(higher_order_functions, filter)
 {
     std::vector<int> v;
-    stdext::filter(arr, std::back_inserter(v), [](int e) { return e > 0; });
+    stdext::filter(arr, std::back_inserter(v), [](auto e) { return e > 0; });
 
     ASSERT_EQ(3, v[0]);
     ASSERT_EQ(4, v[1]);
@@ -71,7 +71,7 @@ TEST(higher_order_functions, filter)
 TEST(higher_order_functions, each)
 {
     auto sum = 0;
-    stdext::each(arr, [&sum](int e) { sum += e; });
+    stdext::each(arr, [&sum](auto e) { sum += e; });
 
     ASSERT_EQ(4, sum);
 }
